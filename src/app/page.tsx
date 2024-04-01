@@ -29,7 +29,12 @@ export default function Home() {
         <h1 className='font-bold text-2xl'>Products</h1>
         <div className='w-full grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 pt-8'>
           {products &&
-            products.map((product) => <ProductCard product={product} />)}
+            products.map((product) => (
+              <ProductCard
+                product={product}
+                key={`productCard${product.productId}`}
+              />
+            ))}
         </div>
       </Page>
     </main>
