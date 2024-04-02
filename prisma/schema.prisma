@@ -26,6 +26,7 @@ model Basket {
   products ProductQuantity[]
   userId Int 
   user User @relation(fields: [userId], references: [userId], onDelete: Cascade, map:"user_basket_fk")
+  completed Boolean @default(false)
 }
 
 model ProductQuantity {

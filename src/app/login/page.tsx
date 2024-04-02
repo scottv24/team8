@@ -1,11 +1,21 @@
 'use client'
 import Modal from '@/components/Modal'
-import { login } from '@/db/login'
-import { useState } from 'react'
+import { loggedInCheck, login } from '@/db/login'
+import { useEffect, useState } from 'react'
 
 export default function Login() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const loggedIn = await loggedInCheck()
+      if (loggedIn) {
+        window.location.replace('/')
+      }
+    }
+    checkLogin()
+  }, [])
 
   return (
     <Modal setOpen={(open: boolean) => {}} noSubmitExit={false}>

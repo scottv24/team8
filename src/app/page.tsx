@@ -4,6 +4,7 @@ import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import ProductCard from '@/components/ProductCard'
 import Page from '@/components/page'
+import { updateBasketDB } from '@/db/basket'
 import { loggedInCheck, login } from '@/db/login'
 import { Basket, Product } from '@/types'
 import { faCartPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -35,6 +36,10 @@ export default function Home() {
       setBasketCount(inBasket)
     }
   }, [product, basket])
+
+  useEffect(() => {
+    updateBasketDB(basket)
+  }, [basket])
 
   const products = [
     {
