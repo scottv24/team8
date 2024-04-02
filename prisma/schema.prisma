@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  userId Int @id @default(autoincrement())
+  email String
+  password String
+  baskets Basket[]
+}
+
+model Basket {
+  basketId Int @id @default(autoincrement())
+  products ProductQuantity[]
+  userId Int 
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, map:"user_basket_fk")
+}
+
+model ProductQuantity {
+  productId Int 
+  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade, map:"product_order_fk")
+  quantity Int 
+  basketId Int
+  basket Basket @relation(fields: [basketId], references: [basketId], onDelete: Cascade, map: "basket_item_fk")
+  @@id([productId, basketId])
+}
+
+model Product {
+  productId Int @id @default(autoincrement())
+  name String @db.VarChar(70)
+  description String @db.VarChar(255)
+  price Decimal @db.Decimal(5,2)
+  img String @db.VarChar(255)
+  productOrders ProductQuantity[]
+}
