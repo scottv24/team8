@@ -24,7 +24,7 @@ export default function Modal({
   }
   return (
     <div
-      className='w-screen h-screen absolute bg-black bg-opacity-70 flex items-center justify-center top-0 left-0'
+      className='w-screen h-screen fixed bg-black bg-opacity-70 flex items-center justify-center top-0 left-0'
       onClick={() => exit()}
     >
       <Card
