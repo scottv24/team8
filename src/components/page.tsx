@@ -16,7 +16,7 @@ export default function Page({
       <Navbar active='Products' basket={basket}></Navbar>
       <div
         className='mt-1/6 flex 
-      flex-col items-center justify-start p-24 overflow-x-hidden w-screen'
+      flex-col items-center justify-start sm:p-24 py-24 px-12 overflow-x-hidden w-screen'
       >
         {children}
       </div>
