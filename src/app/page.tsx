@@ -4,8 +4,9 @@ import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import ProductCard from '@/components/ProductCard'
 import Page from '@/components/page'
-import { updateBasketDB } from '@/db/basket'
+import { getBasket, updateBasketDB } from '@/db/basket'
 import { loggedInCheck, login } from '@/db/login'
+import { getProducts } from '@/db/products'
 import { Basket, Product } from '@/types'
 import { faCartPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,6 +17,7 @@ export default function Home() {
   const [product, showProduct] = useState<Product | null>(null)
   const [basket, updateBasket] = useState<Basket>([])
   const [basketCount, setBasketCount] = useState<number>(0)
+  const [products, setProducts] = useState<Product[]>([])
 
   const addToBasket = (product: Product) =>
     updateBasket([...basket, { ...product, quantity: 1 }])
@@ -26,6 +28,9 @@ export default function Home() {
       if (!loggedIn) {
         window.location.replace('/login')
       }
+      const products = await getProducts()
+      setProducts(products)
+      updateBasket((await getBasket()) || [])
     }
     checkLogin()
   }, [])
@@ -41,92 +46,6 @@ export default function Home() {
     updateBasketDB(basket)
   }, [basket])
 
-  const products = [
-    {
-      productId: 1,
-      name: 'Police Station Set',
-      description: 'Police station blox set. 200pc.',
-      price: 49.99,
-      img: '/Police.png',
-    },
-    {
-      productId: 2,
-      name: 'Fire Engine Set',
-      description: 'Fire Engine blox set. 200pc.',
-      price: 39.99,
-      img: '/Fire Engine.png',
-    },
-    {
-      productId: 3,
-      name: 'Battle Bus Set',
-      description: 'Battle bus blox set 150pc.',
-      price: 69.99,
-      img: '/BattleBus.webp',
-    },
-    {
-      productId: 4,
-      name: 'Brown Car Set',
-      description: 'Brown Car blox set. 200pc.',
-      price: 29.99,
-      img: '/BrownCar.jpg',
-    },
-    {
-      productId: 5,
-      name: 'Lego Ring Set',
-      description: 'Lego Ring Set. 350pc',
-      price: 49.99,
-      img: '/Lego Ring.webp',
-    },
-    {
-      productId: 6,
-      name: 'Lego Box',
-      description: 'Lego Box. 1000pc.',
-      price: 39.99,
-      img: '/Lego.jpg',
-    },
-    {
-      productId: 7,
-      name: 'Avungers Tower Set',
-      description: 'Avungers Tower Set 700pc.',
-      price: 89.99,
-      img: '/Avungers Skyscraper.png',
-    },
-    {
-      productId: 8,
-      name: 'Wizard House Set',
-      description: 'Wizard House Set. 450pc.',
-      price: 89.99,
-      img: '/WizardHouse.jpg',
-    },
-    {
-      productId: 9,
-      name: 'SpaceShip Set',
-      description: 'SpaceShip Set. 1500pc',
-      price: 49.99,
-      img: '/SpaceShip.jpg',
-    },
-    {
-      productId: 10,
-      name: 'Red Lizard Set',
-      description: 'Red Lizard Set. 250pc.',
-      price: 19.99,
-      img: '/RedLizard.jpg',
-    },
-    {
-      productId: 11,
-      name: 'Blue Dragon Set',
-      description: 'Blue Dragon 250pc.',
-      price: 19.99,
-      img: '/Blue Dragon.jpg',
-    },
-    {
-      productId: 12,
-      name: 'Fantasy House Set',
-      description: 'Fantasy House Set. 650pc.',
-      price: 19.99,
-      img: '/FantasyHouse.png',
-    },
-  ]
   return (
     <main
       className='
