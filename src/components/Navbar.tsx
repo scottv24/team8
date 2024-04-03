@@ -31,7 +31,12 @@ export default function Navbar({
           </div>
         </div>
         <div className='w-full flex align-middle sm:justify-center justify-start my-auto'>
-          <Link href='/' className='w-fit text-blue-900'>
+          <Link
+            href='/'
+            className={`w-fit p-2 rounded-md ${
+              active === 'Products' ? 'text-white bg-blue-900' : 'text-blue-900'
+            }`}
+          >
             Products
           </Link>
         </div>
@@ -39,7 +44,9 @@ export default function Navbar({
       <div className='w-full flex justify-end px-6 align-middle'>
         <Link
           href='/basket'
-          className='text-blue-900 text-nowrap w-fit my-auto'
+          className={`p-2 rounded-md ${
+            active === 'Basket' ? 'text-white bg-blue-900' : 'text-blue-900'
+          } text-nowrap w-fit my-auto`}
         >
           <p>
             Basket <FontAwesomeIcon icon={faCartShopping} className='px-2' />{' '}

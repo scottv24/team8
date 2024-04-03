@@ -46,7 +46,7 @@ export default function BasketPage() {
       className='
     min-h-screen  w-full'
     >
-      <Page basket={basket}>
+      <Page basket={basket} active='Basket'>
         <div className='h-full w-full flex flex-col'>
           <h1 className='font-bold text-2xl'>Products</h1>
           <div className=''>
