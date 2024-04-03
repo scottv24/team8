@@ -11,13 +11,23 @@ import { Basket, Product } from '@/types'
 import { faCartPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
   const [product, showProduct] = useState<Product | null>(null)
-  const [basket, updateBasket] = useState<Basket>([])
+  const [basket, updateBasket] = useState<Basket>([
+    {
+      productId: -1,
+      description: '',
+      img: '',
+      price: 0,
+      name: '',
+      quantity: 0,
+    },
+  ])
   const [basketCount, setBasketCount] = useState<number>(0)
   const [products, setProducts] = useState<Product[]>([])
+  const pageRendered = useRef(false)
 
   const addToBasket = (product: Product) =>
     updateBasket([...basket, { ...product, quantity: 1 }])
@@ -30,7 +40,10 @@ export default function Home() {
       }
       const products = await getProducts()
       setProducts(products)
-      updateBasket((await getBasket()) || [])
+      const basket = await getBasket()
+      if (basket) {
+        updateBasket(basket)
+      }
     }
     checkLogin()
   }, [])
@@ -43,7 +56,11 @@ export default function Home() {
   }, [product, basket])
 
   useEffect(() => {
-    updateBasketDB(basket)
+    if (pageRendered.current) {
+      updateBasketDB(basket)
+      return
+    }
+    pageRendered.current = true
   }, [basket])
 
   return (

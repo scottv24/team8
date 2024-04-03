@@ -5,6 +5,10 @@ import { prisma } from '@/lib/prisma'
 import { Basket } from '@/types'
 
 export async function updateBasketDB(basket: Basket) {
+  if (basket.length > 0 && basket[0].productId === -1) {
+    console.log('here')
+    return
+  }
   const userId = getUserId()
   if (!userId) return
 
@@ -19,16 +23,16 @@ export async function updateBasketDB(basket: Basket) {
       where: { userId, completed: false },
     })
   } else {
-    prisma.productQuantity.deleteMany({
+    await prisma.productQuantity.deleteMany({
       where: {
         basketId: existingBaskets[0].basketId,
         NOT: { productId: { in: [...productIds] } },
       },
     })
   }
-
+  const filtered = basket.filter((products) => products.quantity > 0)
   await Promise.all(
-    basket.map(async (product) => {
+    filtered.map(async (product) => {
       await prisma.productQuantity.upsert({
         where: {
           productId_basketId: {
