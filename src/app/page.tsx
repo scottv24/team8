@@ -3,6 +3,7 @@ import { getBasketCount, getNewBasket, removeFromBasket } from '@/basket'
 import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import ProductCard from '@/components/ProductCard'
+import Spinner from '@/components/Spinner'
 import Page from '@/components/page'
 import { getBasket, updateBasketDB } from '@/db/basket'
 import { loggedInCheck, login } from '@/db/login'
@@ -70,6 +71,7 @@ export default function Home() {
     >
       <Page basket={basket}>
         <h1 className='font-bold text-2xl'>Products</h1>
+        {products.length === 0 && <Spinner />}
         <div className='w-full grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 pt-8'>
           {products &&
             products.map((product) => (
