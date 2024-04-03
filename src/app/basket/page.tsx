@@ -5,7 +5,7 @@ import { Basket } from '@/types'
 import { getBasket, updateBasketDB } from '@/db/basket'
 import { loggedInCheck } from '@/db/login'
 
-export default function Basket() {
+export default function BasketPage() {
   const [basket, updateBasket] = useState<Basket>([
     {
       productId: -1,

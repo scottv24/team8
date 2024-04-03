@@ -43,7 +43,7 @@ export default function ProductCard({
   useEffect(() => {
     const inBasket = getBasketCount(basket, product)
     setBasketCount(inBasket)
-  }, [basket])
+  }, [basket, product])
 
   return (
     <Card
