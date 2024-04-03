@@ -6,21 +6,30 @@ import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
 
 export async function login(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
-  const hash = user?.password
-  if (!hash) {
-    return
+  try {
+    const user = await prisma.user.findUnique({ where: { email } })
+    const hash = user?.password
+    if (!hash) {
+      return { success: false, error: 'Could not find account with this email' }
+    }
+
+    const correct = await bcrypt.compare(password, hash)
+    if (!correct) return { success: false, error: 'Incorrect password' }
+
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret)
+      return { success: false, error: 'Error logging in, try again later' }
+
+    const token = jwt.sign({ userId: user.userId }, jwtSecret, {
+      expiresIn: '8h',
+    })
+
+    cookies().set({ name: 'token', value: token, httpOnly: true })
+    return { success: true }
+  } catch (err) {
+    console.log(err)
+    return { success: false, error: 'Error logging in, try again later' }
   }
-  const correct = await bcrypt.compare(password, hash)
-
-  const jwtSecret = process.env.JWT_SECRET
-  if (!jwtSecret || !correct) return false
-  const token = jwt.sign({ userId: user.userId }, jwtSecret, {
-    expiresIn: '8h',
-  })
-
-  cookies().set({ name: 'token', value: token, httpOnly: true })
-  return true
 }
 
 export async function loggedInCheck() {

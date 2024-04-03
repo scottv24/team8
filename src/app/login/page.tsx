@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 export default function Login() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -25,22 +26,34 @@ export default function Login() {
         </p>
         <p className='font-bold'>Email</p>
         <input
-          className='rounded-md border-2 border-black p-2'
+          className={`${
+            error === 'Could not find account with this email'
+              ? 'border-red-700 border-4'
+              : 'border-2 border-black'
+          } rounded-md  p-2`}
           placeholder='example@email.com'
           onChange={(e) => setEmail(e.target.value)}
         />
         <p className='font-bold'>Password</p>
         <input
-          className='rounded-md border-2 border-black p-2'
+          className={`${
+            error === 'Incorrect password'
+              ? 'border-red-700 border-4'
+              : 'border-2 border-black'
+          } rounded-md  p-2`}
+          type='password'
           placeholder='Password...'
           onChange={(e) => setPassword(e.target.value)}
         />
+        <p className='p-2 font-semibold text-red-800'>{error}</p>
         <button
           className='bg-blue-900 text-white rounded-md p-2 my-4'
           onClick={async () => {
-            const success = await login(email, password)
+            const { success, error } = await login(email, password)
             if (success) {
               window.location.replace('/')
+            } else {
+              setError(error || '')
             }
           }}
         >

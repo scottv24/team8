@@ -84,6 +84,15 @@ export default function ProductCard({
             onClick={(e) => updateBasketClick(e)}
           />
           <button
+            className='px-2  font-bold text-2xl aspect-square border-2 border-slate-800 rounded-full'
+            onClick={(e) => {
+              updateBasketClick(e)
+              updateBasket(getNewBasket(basket, product, basketCount + 1))
+            }}
+          >
+            +
+          </button>
+          <button
             className='w-1/4 bg-red-700 text-white rounded-lg'
             onClick={(e) => removeBasket(e)}
           >
