@@ -45,7 +45,7 @@ export default function ProductCard({
       key={product.productId}
       onClick={(e) => showProduct()}
     >
-      <div className='w-full flex justify-center'>
+      <div className='w-full flex justify-center p-4'>
         <Image
           src={product.img}
           alt='Image of police station set.'
