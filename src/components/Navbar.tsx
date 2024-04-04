@@ -1,11 +1,12 @@
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCartShopping } from '@fortawesome/free-solid-svg-icons'
+import { faCartShopping, faSignOut } from '@fortawesome/free-solid-svg-icons'
 import { Basket } from '@/types'
 import { useEffect, useState } from 'react'
 import { countBasket } from '@/basket'
 import Image from 'next/image'
 import { updateBasketClicks } from '@/db/times'
+import { signOut } from '@/db/login'
 
 export default function Navbar({
   active,
@@ -53,8 +54,17 @@ export default function Navbar({
         >
           <p>
             Basket <FontAwesomeIcon icon={faCartShopping} className='px-2' />{' '}
-            {basketCount}
+            {basketCount > 0 ? basketCount : ''}
           </p>
+        </button>
+        <button
+          className='ml-4 rounded-md p-2 text-white bg-blue-900  my-auto'
+          onClick={async () => {
+            const success = await signOut()
+            if (success) window.location.replace('/login')
+          }}
+        >
+          Log Out <FontAwesomeIcon icon={faSignOut} />
         </button>
       </div>
     </div>

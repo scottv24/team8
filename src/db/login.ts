@@ -84,3 +84,8 @@ export async function signUp(
   cookies().set({ name: 'token', value: token, httpOnly: true })
   return { success: true }
 }
+
+export async function signOut() {
+  cookies().delete('token')
+  return true
+}
