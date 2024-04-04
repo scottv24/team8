@@ -14,6 +14,7 @@ export default function Confirmation() {
         <p className='text-green-700 font-bold text-4xl text-center my-2'>
           Order Confirmed!
         </p>
+        <p>Collect your order in store!</p>
         <button
           className='bg-blue-900 font-bold text-white p-2 rounded-md my-16'
           onClick={() => window.location.replace('/')}
