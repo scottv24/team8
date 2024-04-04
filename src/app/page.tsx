@@ -1,18 +1,25 @@
 'use client'
-import { getBasketCount, getNewBasket, removeFromBasket } from '@/basket'
-import Card from '@/components/Card'
+import { getBasketCount } from '@/basket'
 import Modal from '@/components/Modal'
 import ProductCard from '@/components/ProductCard'
+import QuantityPicker from '@/components/QuantityPicker'
 import Spinner from '@/components/Spinner'
 import Page from '@/components/page'
 import { getBasket, updateBasketDB } from '@/db/basket'
-import { loggedInCheck, login } from '@/db/login'
+import { loggedInCheck } from '@/db/login'
 import { getProducts } from '@/db/products'
 import { Basket, Product } from '@/types'
-import { faCartPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCartPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+import { clearInterval } from 'timers'
+import {
+  updateOverallATB,
+  updateProductATB,
+  updateProductsPageTime,
+  updateTimes,
+} from '@/db/times'
 
 export default function Home() {
   const [product, showProduct] = useState<Product | null>(null)
@@ -28,10 +35,20 @@ export default function Home() {
   ])
   const [basketCount, setBasketCount] = useState<number>(0)
   const [products, setProducts] = useState<Product[]>([])
+  const [resetProductTimer, flagReset] = useState(false)
+
+  let pageTimer = 0
+  let productTimer = 0
   const pageRendered = useRef(false)
 
   const addToBasket = (product: Product) =>
     updateBasket([...basket, { ...product, quantity: 1 }])
+
+  const callUpdate = async () => {
+    console.log('hihihihihi')
+    await updateTimes({ productTimer })
+    console.log('nice man')
+  }
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -47,6 +64,44 @@ export default function Home() {
       }
     }
     checkLogin()
+    let pageTimerFunction
+    clearInterval(pageTimerFunction)
+
+    pageTimerFunction = setInterval(() => {
+      // Update timer for main page
+      pageTimer++
+
+      //Check if modal has been closed
+      let resetFlag = false
+      flagReset((state) => {
+        resetFlag = state
+        return false
+      })
+      // Send to DB and reset timer if modal is closed
+      if (resetFlag) {
+        updateTimes({ productTimer })
+        productTimer = 0
+      }
+
+      // Update product time if modal is open
+      let currentProduct = null
+      showProduct((product) => {
+        currentProduct = product
+        return product
+      })
+      if (currentProduct) {
+        productTimer++
+      }
+      //Update time in DB if timer reaches 10 seconds
+      if (pageTimer === 5) {
+        pageTimer = 0
+        updateProductsPageTime()
+      }
+      console.log(`Products page: ${pageTimer}\nItem View:${productTimer}`)
+    }, 1000)
+
+    //window.addEventListener('beforeunload', beforeUnload)
+    //return clearInterval(pageTimerFunction)
   }, [])
 
   useEffect(() => {
@@ -85,6 +140,7 @@ export default function Home() {
                 }}
                 basket={basket}
                 updateBasket={updateBasket}
+                atbClicked={updateOverallATB}
               />
             ))}
         </div>
@@ -94,6 +150,7 @@ export default function Home() {
           noSubmitExit={false}
           setOpen={(show: boolean) => {
             if (!show) {
+              flagReset(true)
               showProduct(null)
             }
           }}
@@ -116,31 +173,19 @@ export default function Home() {
             {basketCount === 0 ? (
               <button
                 className='rounded-lg bg-blue-900 text-white p-2 hover:bg-blue-700'
-                onClick={() => addToBasket(product)}
+                onClick={() => {
+                  addToBasket(product)
+                  updateProductATB()
+                }}
               >
                 Add to cart <FontAwesomeIcon icon={faCartPlus} />
               </button>
             ) : (
-              <div className='flex w-full justify-center'>
-                <input
-                  className='border-2 border-black w-1/4 p-2 rounded-md'
-                  type='number'
-                  min={0}
-                  max={25}
-                  value={basketCount}
-                  onChange={(e) =>
-                    updateBasket(getNewBasket(basket, product, +e.target.value))
-                  }
-                />
-                <button
-                  className='w-1/4 bg-red-700 text-white rounded-lg'
-                  onClick={() =>
-                    updateBasket(removeFromBasket(basket, product))
-                  }
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
+              <QuantityPicker
+                basket={basket}
+                product={{ ...product, quantity: basketCount }}
+                updateBasket={updateBasket}
+              />
             )}
           </div>
         </Modal>

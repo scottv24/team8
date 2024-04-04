@@ -88,3 +88,23 @@ export async function getBasket() {
     return
   }
 }
+
+export async function completePurchase() {
+  try {
+    const userId = getUserId()
+    if (!userId) return
+
+    const existingBaskets = await prisma.basket.findMany({
+      where: { userId, completed: false },
+    })
+
+    const { basketId } = existingBaskets[0]
+    await prisma.basket.update({
+      where: { basketId },
+      data: { completed: true },
+    })
+    return true
+  } catch (err) {
+    console.log(err)
+  }
+}

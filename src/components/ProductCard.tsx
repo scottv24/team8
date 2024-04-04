@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Basket } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { getBasketCount, getNewBasket, removeFromBasket } from '@/basket'
+import QuantityPicker from './QuantityPicker'
 
 export default function ProductCard({
   product,
@@ -12,6 +13,7 @@ export default function ProductCard({
   addToBasket,
   updateBasket,
   basket,
+  atbClicked,
 }: {
   product: {
     productId: number
@@ -24,19 +26,11 @@ export default function ProductCard({
   addToBasket: () => void
   updateBasket: (basket: Basket) => void
   basket: Basket
+  atbClicked: () => void
 }) {
   const handleChildElementClick = (e: React.MouseEvent<HTMLElement>) => {
     if (e && e.stopPropagation) e.stopPropagation()
     addToBasket()
-  }
-
-  const updateBasketClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (e && e.stopPropagation) e.stopPropagation()
-  }
-
-  const removeBasket = (e: React.MouseEvent<HTMLElement>) => {
-    if (e && e.stopPropagation) e.stopPropagation()
-    updateBasket(removeFromBasket(basket, product))
   }
 
   const [basketCount, setBasketCount] = useState<number>(0)
@@ -64,41 +58,19 @@ export default function ProductCard({
       {basketCount === 0 ? (
         <button
           className='rounded-lg bg-blue-900 text-white p-2 hover:bg-blue-700'
-          onClick={(e: React.MouseEvent<HTMLElement>) =>
+          onClick={(e: React.MouseEvent<HTMLElement>) => {
             handleChildElementClick(e)
-          }
+            atbClicked()
+          }}
         >
           Add to cart <FontAwesomeIcon icon={faCartPlus} />
         </button>
       ) : (
-        <div className='flex w-full justify-center'>
-          <input
-            className='border-2 border-black w-1/4 p-2 rounded-md'
-            type='number'
-            min={0}
-            max={25}
-            value={basketCount}
-            onChange={(e) =>
-              updateBasket(getNewBasket(basket, product, +e.target.value))
-            }
-            onClick={(e) => updateBasketClick(e)}
-          />
-          <button
-            className='px-2  font-bold text-2xl aspect-square border-2 border-slate-800 rounded-full'
-            onClick={(e) => {
-              updateBasketClick(e)
-              updateBasket(getNewBasket(basket, product, basketCount + 1))
-            }}
-          >
-            +
-          </button>
-          <button
-            className='w-1/4 bg-red-700 text-white rounded-lg'
-            onClick={(e) => removeBasket(e)}
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-        </div>
+        <QuantityPicker
+          basket={basket}
+          product={{ ...product, quantity: basketCount }}
+          updateBasket={updateBasket}
+        />
       )}
     </Card>
   )

@@ -26,6 +26,12 @@ model Basket {
   products ProductQuantity[]
   userId Int 
   user User @relation(fields: [userId], references: [userId], onDelete: Cascade, map:"user_basket_fk")
+  productsViewTime Int @default(0)
+  atbBrowseClicks Int @default(0)
+  idvProductTime Int @default(0)
+  atbProductClicks Int @default(0)
+  basketClicks Int @default(0)
+  checkoutTime Int @default(0)
   completed Boolean @default(false)
 }
 

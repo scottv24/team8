@@ -8,6 +8,6 @@ export interface Product {
   img: string
 }
 
-type ProductWithQuantity = Product & { quantity: number }
+export type ProductWithQuantity = Product & { quantity: number }
 
 export type Basket = ProductWithQuantity[]
