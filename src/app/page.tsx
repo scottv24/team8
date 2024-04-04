@@ -44,12 +44,6 @@ export default function Home() {
   const addToBasket = (product: Product) =>
     updateBasket([...basket, { ...product, quantity: 1 }])
 
-  const callUpdate = async () => {
-    console.log('hihihihihi')
-    await updateTimes({ productTimer })
-    console.log('nice man')
-  }
-
   useEffect(() => {
     const checkLogin = async () => {
       const loggedIn = await loggedInCheck()

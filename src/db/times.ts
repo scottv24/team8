@@ -64,14 +64,14 @@ export async function updateBasketClicks() {
   }
 }
 
-export async function updateBasketTimes(pageTimer: number) {
+export async function updateBasketTimes() {
   try {
     const userId = getUserId()
     if (!userId) return
 
     await prisma.$queryRaw`
       UPDATE "Basket" 
-      SET "checkoutTime" = "checkoutTime"+${pageTimer}
+      SET "checkoutTime" = "checkoutTime"+5
       WHERE "userId" = ${userId} AND "completed" = false;
       `
   } catch (err) {

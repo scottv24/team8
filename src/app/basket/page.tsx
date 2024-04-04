@@ -11,9 +11,6 @@ import { updateBasketTimes } from '@/db/times'
 
 export default function BasketPage() {
   let pageTimer = 0
-  function beforeUnload(e: BeforeUnloadEvent) {
-    updateBasketTimes(pageTimer)
-  }
 
   useEffect(() => {
     let pageTimerFunction
@@ -21,9 +18,12 @@ export default function BasketPage() {
 
     pageTimerFunction = setInterval(() => {
       pageTimer++
+      //Update time in DB if timer reaches 10 seconds
+      if (pageTimer === 5) {
+        pageTimer = 0
+        updateBasketTimes()
+      }
     }, 1000)
-
-    window.addEventListener('beforeunload', beforeUnload)
   }, [])
 
   const [basket, updateBasket] = useState<Basket>([
@@ -170,7 +170,7 @@ async function checkCardDetails(cardDetails: {
   }
   const completed = await completePurchase()
   if (completed) {
-    window.location.replace('/')
+    window.location.replace('/confirmation')
   }
   return {}
 }
