@@ -8,10 +8,12 @@ export default function Modal({
   setOpen,
   children,
   noSubmitExit,
+  signUp,
 }: {
   setOpen: (state: boolean) => any
   children: ReactNode
   noSubmitExit: boolean
+  signUp?: boolean
 }) {
   const handleChildElementClick = (e: React.MouseEvent<HTMLElement>) => {
     if (noSubmitExit || e?.type !== 'submit') {
@@ -28,7 +30,9 @@ export default function Modal({
       onClick={() => exit()}
     >
       <Card
-        className='w-full sm:w-3/4 md:w-3/5 lg:w-1/2 xl:w-2/5 h-full sm:h-auto sm:aspect-video rounded-md p-10 sm:p-6 text-lg font-semibold '
+        className={`w-full sm:w-3/4 md:w-3/5 lg:w-1/2 xl:w-2/5 h-full sm:h-auto ${
+          signUp ? '' : 'sm:aspect-video'
+        } rounded-md p-10 sm:p-6 text-lg font-semibold`}
         onClick={(e: React.MouseEvent<HTMLElement>) =>
           handleChildElementClick(e)
         }

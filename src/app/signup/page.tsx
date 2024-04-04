@@ -1,11 +1,12 @@
 'use client'
 import Modal from '@/components/Modal'
-import { loggedInCheck, login } from '@/db/login'
+import { loggedInCheck, login, signUp } from '@/db/login'
 import { useEffect, useState } from 'react'
 
 export default function Login() {
   const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
+  const [password1, setPassword1] = useState<string>('')
+  const [password2, setPassword2] = useState<string>('')
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
@@ -20,14 +21,14 @@ export default function Login() {
 
   return (
     <Modal setOpen={(open: boolean) => {}} noSubmitExit={false} signUp={true}>
-      <div className='w-full h-full flex flex-col justify-center align-middle '>
+      <div className='w-full h-full flex flex-col justify-center align-middle'>
         <p className='font-bold text-blue-900 text-2xl text-center mb-6'>
-          Login
+          Sign Up
         </p>
         <p className='font-bold'>Email</p>
         <input
           className={`${
-            error === 'Could not find account with this email'
+            error === 'Email already in use'
               ? 'border-red-700 border-4'
               : 'border-2 border-black'
           } rounded-md  p-2`}
@@ -37,19 +38,30 @@ export default function Login() {
         <p className='font-bold'>Password</p>
         <input
           className={`${
-            error === 'Incorrect password'
+            error === "Passwords don't match"
               ? 'border-red-700 border-4'
               : 'border-2 border-black'
           } rounded-md  p-2`}
           type='password'
           placeholder='Password...'
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword1(e.target.value)}
+        />
+        <p className='font-bold'>Confirm Password</p>
+        <input
+          className={`${
+            error === "Passwords don't match"
+              ? 'border-red-700 border-4'
+              : 'border-2 border-black'
+          } rounded-md  p-2`}
+          type='password'
+          placeholder='Password...'
+          onChange={(e) => setPassword2(e.target.value)}
         />
         <p className='p-2 font-semibold text-red-800'>{error}</p>
         <button
           className='bg-blue-900 text-white rounded-md p-2 my-4'
           onClick={async () => {
-            const { success, error } = await login(email, password)
+            const { success, error } = await signUp(email, password1, password2)
             if (success) {
               window.location.replace('/')
             } else {
@@ -61,9 +73,9 @@ export default function Login() {
         </button>
         <button
           className='underline text-blue-900 font-semibold'
-          onClick={() => window.location.replace('/signup')}
+          onClick={() => window.location.replace('/login')}
         >
-          Or sign up here!
+          Have an account? Login here!
         </button>
       </div>
     </Modal>

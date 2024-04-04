@@ -55,3 +55,32 @@ export async function loggedInCheck() {
     console.log(err)
   }
 }
+
+export async function signUp(
+  email: string,
+  password1: string,
+  password2: string
+) {
+  let user = await prisma.user.findUnique({ where: { email } })
+  if (user) {
+    return { success: false, error: 'Email already in use' }
+  }
+
+  if (password1 !== password2) {
+    return { success: false, error: "Passwords don't match" }
+  }
+
+  const password = await bcrypt.hash(password1, 10)
+  user = await prisma.user.create({ data: { email, password } })
+
+  const jwtSecret = process.env.JWT_SECRET
+  if (!jwtSecret)
+    return { success: false, error: 'Error logging in, try again later' }
+
+  const token = jwt.sign({ userId: user.userId }, jwtSecret, {
+    expiresIn: '8h',
+  })
+
+  cookies().set({ name: 'token', value: token, httpOnly: true })
+  return { success: true }
+}
